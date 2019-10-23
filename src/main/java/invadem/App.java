@@ -19,8 +19,22 @@ public class App extends PApplet {
 
     public void setup() {
         frameRate(60);
+        int num_x = 250;
+        int num_y = 30;
 
-        invaders.add(new Invader(loadImage("invader1.png"), 30, 30,16, 16));
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 10; j ++) {
+                invaders.add(new Invader(
+                            loadImage("invader1.png"),
+                            loadImage("invader2.png"),
+                            loadImage("empty.png"),
+                            num_x, num_y, 16, 16
+                            ));
+                num_x += 20;
+            }
+            num_y += 20;
+            num_x = 250;
+        }
     }
 
     public void settings() {
