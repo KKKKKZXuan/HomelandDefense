@@ -28,6 +28,10 @@ public class Tank {
         this.x -= 1;
     }
 
+    public int getX() {
+        return this.x;
+    }
+
     public void draw(PApplet app) {
         app.image(img, x, y, width, height);
     }

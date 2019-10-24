@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import invadem.objects.barriers.Barrier;
+import invadem.objects.hints.Hint;
 import invadem.objects.invaders.Invader;
 import invadem.objects.projectiles.Projectile;
 import invadem.objects.tanks.Tank;
@@ -17,6 +18,10 @@ public class App extends PApplet {
     private List<Barrier> barriers;
     private List<Tank> tanks;
     private List<Projectile> projectiles;
+    private List<Hint> hints;
+
+    private boolean isAlive = true;
+    private boolean isDead = false;
 
     public App() {
         //Set up your objects
@@ -123,10 +128,7 @@ public class App extends PApplet {
                 300, 450, 22, 14
         ));
 
-        projectiles.add (new Projectile(
-                loadImage("projectile.png"),
-                300, 450, 1, 3
-        ));
+
 
     }
 
@@ -134,34 +136,77 @@ public class App extends PApplet {
         size(640, 480);
     }
 
-    public void draw() { 
+    public void draw() {
         //Main Game Loop
 
         background(0);
-        for(Invader inv : invaders) {
-            inv.draw(this);
+
+        if (isAlive) {
+            for (Invader inv : invaders) {
+                inv.draw(this);
+            }
+            for (Barrier bar : barriers) {
+                bar.draw(this);
+            }
+            for (Tank tank : tanks) {
+                tank.draw(this);
+            }
+            for (Projectile ile : projectiles) {
+                ile.draw(this);
+            }
         }
-        for(Barrier bar : barriers) {
-            bar.draw(this);
-        }
-        for(Tank tank : tanks) {
-            tank.draw(this);
-        }
-        for(Projectile ile : projectiles) {
-            ile.draw(this);
+        else {
+            if (isDead) {
+                gameOver();
+            }
         }
 
+
+
+    }
+
+    private void shot() {
+        projectiles.add(new Projectile(
+                loadImage("projectile.png"),
+                tanks.get(0).getX() + 10, 445, 1, 3
+        ));
+    }
+
+    private void gameOver() {
+        hints.add(new Hint(
+                loadImage("gameover.png"),
+                269, 240, 112, 16
+        ));
     }
 
     public void keyPressed() {
 
         System.out.println(keyCode);
-        if (key == 39) {
+        if (keyCode == 39) {
+            System.out.println("right");
             tanks.get(0).rightTick();
         }
-        if (key == 37) {
+        if (keyCode == 37) {
+            System.out.println("left");
             tanks.get(0).leftTick();
         }
+        if (keyCode == 32) {
+            System.out.println("shot");
+            shot();
+        }
+        if (keyCode == 192) {
+            System.out.println("gameover");
+            if (isAlive) {
+                isAlive = false;
+                isDead = true;
+            }
+            else {
+                isAlive = true;
+                isDead = false;
+            }
+        }
+
+
     }
 
     public static void main(String[] args) {
