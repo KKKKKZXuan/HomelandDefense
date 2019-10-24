@@ -5,14 +5,18 @@ import java.util.ArrayList;
 
 import invadem.objects.barriers.Barrier;
 import invadem.objects.invaders.Invader;
+import invadem.objects.projectiles.Projectile;
 import invadem.objects.tanks.Tank;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
+
 
 public class App extends PApplet {
 
-    List<Invader> invaders;
-    List<Barrier> barriers;
-    List<Tank> tanks;
+    private List<Invader> invaders;
+    private List<Barrier> barriers;
+    private List<Tank> tanks;
+    private List<Projectile> projectiles;
 
     public App() {
         //Set up your objects
@@ -20,6 +24,8 @@ public class App extends PApplet {
         invaders = new ArrayList<Invader>();
         barriers = new ArrayList<Barrier>();
         tanks = new ArrayList<Tank>();
+
+        projectiles = new ArrayList<Projectile>();
 
     }
 
@@ -112,9 +118,14 @@ public class App extends PApplet {
 
         }
 
-        tanks.add(new Tank(
+        tanks.add (new Tank(
                 loadImage("tank1.png"),
                 300, 450, 22, 14
+        ));
+
+        projectiles.add (new Projectile(
+                loadImage("projectile.png"),
+                300, 450, 1, 3
         ));
 
     }
@@ -136,8 +147,21 @@ public class App extends PApplet {
         for(Tank tank : tanks) {
             tank.draw(this);
         }
+        for(Projectile ile : projectiles) {
+            ile.draw(this);
+        }
 
+    }
 
+    public void keyPressed() {
+
+        System.out.println(keyCode);
+        if (key == 39) {
+            tanks.get(0).rightTick();
+        }
+        if (key == 37) {
+            tanks.get(0).leftTick();
+        }
     }
 
     public static void main(String[] args) {
