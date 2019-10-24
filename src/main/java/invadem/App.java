@@ -29,8 +29,8 @@ public class App extends PApplet {
         invaders = new ArrayList<Invader>();
         barriers = new ArrayList<Barrier>();
         tanks = new ArrayList<Tank>();
-
         projectiles = new ArrayList<Projectile>();
+        hints = new ArrayList<Hint>();
 
     }
 
@@ -142,6 +142,11 @@ public class App extends PApplet {
         background(0);
 
         if (isAlive) {
+
+            if (tanks.size() == 0) {
+                setup();
+            }
+
             for (Invader inv : invaders) {
                 inv.draw(this);
             }
@@ -156,14 +161,14 @@ public class App extends PApplet {
             }
         }
         else {
-            if (isDead) {
-                gameOver();
-            }
+            invaders.clear();
+            barriers.clear();
+            tanks.clear();
+            projectiles.clear();
+            hints.get(0).draw(this);
         }
-
-
-
     }
+
 
     private void shot() {
         projectiles.add(new Projectile(
@@ -173,6 +178,7 @@ public class App extends PApplet {
     }
 
     private void gameOver() {
+
         hints.add(new Hint(
                 loadImage("gameover.png"),
                 269, 240, 112, 16
@@ -195,14 +201,17 @@ public class App extends PApplet {
             shot();
         }
         if (keyCode == 192) {
-            System.out.println("gameover");
+
             if (isAlive) {
                 isAlive = false;
                 isDead = true;
+                gameOver();
+                System.out.println("gameover");
             }
             else {
                 isAlive = true;
                 isDead = false;
+                System.out.println("gamestart");
             }
         }
 
