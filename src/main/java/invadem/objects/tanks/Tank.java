@@ -11,6 +11,8 @@ public class Tank {
     private int height;
     private PImage img;
 
+    private int sustain = 3;
+
     public Tank(PImage img, int x, int y, int width, int height) {
         this.img = img;
         this.x = x;
@@ -30,6 +32,29 @@ public class Tank {
 
     public int getX() {
         return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void reduceSustain() {
+        sustain -= 1;
+    }
+
+    public int getSustain() {
+        if (sustain < 0) {
+            return 0;
+        }
+        return sustain;
     }
 
     public void draw(PApplet app) {

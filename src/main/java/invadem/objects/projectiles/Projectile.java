@@ -1,18 +1,16 @@
 package invadem.objects.projectiles;
 
 import processing.core.PApplet;
-import processing.core.PImage;
 
-public class Projectile {
+public abstract class Projectile {
 
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-    private PImage img;
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
 
-    public Projectile(PImage img, int x, int y, int width, int height) {
-        this.img = img;
+
+    public Projectile(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -20,14 +18,21 @@ public class Projectile {
 
     }
 
-    private void yTick() {
-        this.y -= 1;
+    public int getX() {
+        return this.x;
     }
 
-
-
-    public void draw(PApplet app) {
-        app.image(img, x, y, width, height);
-        yTick();
+    public int getY() {
+        return this.y;
     }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public abstract void draw(PApplet app);
 }

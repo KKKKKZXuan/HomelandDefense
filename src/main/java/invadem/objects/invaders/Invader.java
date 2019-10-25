@@ -15,6 +15,8 @@ public class Invader {
     private PImage now_img;
     private int time = 0;
 
+    public boolean touchBottom = false;
+
     public Invader(PImage img1, PImage img2, PImage eptImg, int x, int y, int width, int height) {
         this.img1 = img1;
         this.img2 = img2;
@@ -27,6 +29,22 @@ public class Invader {
         now_img = img1;
     }
 
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
     private void xRightTick() {
         this.x += 1;
     }
@@ -37,6 +55,10 @@ public class Invader {
 
     private void yTick() {
         this.y += 1;
+    }
+    
+    public void IsTouchBottom() {
+        touchBottom = true;
     }
 
     public void draw(PApplet app) {
@@ -62,7 +84,7 @@ public class Invader {
             }
         }
         else {
-            now_img = eptImg;
+            IsTouchBottom();
         }
 
 
