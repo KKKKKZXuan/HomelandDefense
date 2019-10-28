@@ -25,8 +25,13 @@ public class App extends PApplet {
     public int time = 0;
     public int randomInv = 0;
 
-    private boolean isAlive = true;
+//    private boolean isAlive = true;
     private boolean isDead = false;
+    private boolean isNextLevel = false;
+    private boolean takeIn = true;
+    private boolean haveInvShot = true;
+    private boolean canTankShot = true;
+
 
     public App() {
         //Set up your objects
@@ -135,23 +140,26 @@ public class App extends PApplet {
 
         background(0);
 
-        if (invaders.size() == 0) {
-            nextLevel();
-            hints.get(0).draw(this);
-        }
-
-        if (isAlive) {
+        if (!isDead && !isNextLevel) {
 
             if (tanks.size() == 0) {
                 setup();
             }
 
+            haveInvShot = true;
+
+            if (invaders.size() == 0) {
+                nextLevel();
+            }
+
             for (Invader inv : invaders) {
                 inv.draw(this);
+                if (time % 300 == 0 && time != 0) {
+                    if (haveInvShot) {
+                        invShot();
+                        haveInvShot = false;
+                    }
 
-                if (time >= 300) {
-                    invShot();
-                    time = 0;
                 }
 
                 if (inv.getY() > 380) {
@@ -257,17 +265,32 @@ public class App extends PApplet {
 
         }
         else {
-            if (isDead) {
-                invaders.clear();
-                barriers.clear();
-                tanks.clear();
-                tankprojectiles.clear();
-                invprojectiles.clear();
-                hints.get(0).draw(this);
+            invaders.clear();
+            barriers.clear();
+            tanks.clear();
+            tankprojectiles.clear();
+            invprojectiles.clear();
+            for (Hint hint : hints) {
+                hint.draw(this);
             }
+            if (takeIn) {
+                time = -50;
+                takeIn = false;
+            }
+
         }
 
         time += 1;
+
+        if (isDead && time == -1) {
+            System.exit(1);
+        }
+
+        if (isNextLevel && time == -1) {
+            isNextLevel = false;
+            takeIn = true;
+            setup();
+        }
     }
 
     private boolean check_collection(TankProjectile a, Invader b) {
@@ -321,7 +344,7 @@ public class App extends PApplet {
 
     private void tankShot() {
 
-        if (isAlive) {
+        if (!isDead) {
             tankprojectiles.add(new TankProjectile(
                     loadImage("projectile.png"),
                     tanks.get(0).getX() + 10, 445, 1, 3
@@ -340,18 +363,19 @@ public class App extends PApplet {
 
     private void gameOver() {
 
-        isAlive = false;
         isDead = true;
+
         hints.add(new Hint(
                 loadImage("gameover.png"),
                 269, 240, 112, 16
         ));
+
     }
 
     private void nextLevel() {
 
-        isAlive = false;
-        isDead = false;
+        isNextLevel = true;
+
         hints.add(new Hint(
                 loadImage("nextlevel.png"),
                 269, 240, 112, 16
@@ -361,35 +385,41 @@ public class App extends PApplet {
     public void keyPressed() {
 
         System.out.println(keyCode);
-        if (keyCode == 39) {
-            System.out.println("right");
-            tanks.get(0).rightTick();
+        switch (keyCode) {
+            case 39:
+                System.out.println("right");
+                tanks.get(0).rightTick();
+                break;
+            case 37:
+                System.out.println("left");
+                tanks.get(0).leftTick();
+                break;
+            case 32:
+                System.out.println("shot");
+                if (canTankShot) {
+                    tankShot();
+                    canTankShot = false;
+                }
+                break;
+            case 192:
+                if (!isDead) {
+                    isDead = true;
+                    System.out.println("gameover");
+                    gameOver();
+                } else {
+                    isDead = false;
+                    System.out.println("gamestart");
+                }
+                break;
+            case 68:
+                invaders.clear();
+                break;
         }
-        else if (keyCode == 37) {
-            System.out.println("left");
-            tanks.get(0).leftTick();
-        }
-        else if (keyCode == 32) {
-            System.out.println("shot");
-            tankShot();
-        }
-        else if (keyCode == 192) {
-
-            if (isAlive) {
-                isAlive = false;
-                isDead = true;
-                gameOver();
-                System.out.println("gameover");
-            }
-            else {
-                isAlive = true;
-                isDead = false;
-                System.out.println("gamestart");
-            }
-        }
-        else if (keyCode == 68) {
-
-            invaders.clear();
+    }
+    public void keyReleased() {
+        switch (keyCode) {
+            case 32:
+                canTankShot = true;
         }
     }
 
