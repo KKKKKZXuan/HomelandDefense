@@ -291,6 +291,40 @@ public class App extends PApplet {
             takeIn = true;
             setup();
         }
+
+        if (keyPressed) {
+
+            System.out.println(keyCode);
+            System.out.println(key);
+
+
+            if (keyCode == 39) {
+                System.out.println("right");
+                tanks.get(0).rightTick();
+            } else if (keyCode == 37) {
+                System.out.println("left");
+                tanks.get(0).leftTick();
+            } else if (key == ' ') {
+                System.out.println("shot");
+                if (canTankShot) {
+                    tankShot();
+                    canTankShot = false;
+                }
+            } else if (keyCode == 192) {
+                if (!isDead) {
+                    isDead = true;
+                    System.out.println("gameover");
+                    gameOver();
+                } else {
+                    isDead = false;
+                    System.out.println("gamestart");
+                }
+            } else if (key == 'd') {
+                invaders.clear();
+            }
+        }
+
+
     }
 
     private boolean check_collection(TankProjectile a, Invader b) {
@@ -382,44 +416,9 @@ public class App extends PApplet {
         ));
     }
 
-    public void keyPressed() {
-
-        System.out.println(keyCode);
-        switch (keyCode) {
-            case 39:
-                System.out.println("right");
-                tanks.get(0).rightTick();
-                break;
-            case 37:
-                System.out.println("left");
-                tanks.get(0).leftTick();
-                break;
-            case 32:
-                System.out.println("shot");
-                if (canTankShot) {
-                    tankShot();
-                    canTankShot = false;
-                }
-                break;
-            case 192:
-                if (!isDead) {
-                    isDead = true;
-                    System.out.println("gameover");
-                    gameOver();
-                } else {
-                    isDead = false;
-                    System.out.println("gamestart");
-                }
-                break;
-            case 68:
-                invaders.clear();
-                break;
-        }
-    }
     public void keyReleased() {
-        switch (keyCode) {
-            case 32:
-                canTankShot = true;
+        if (!canTankShot) {
+            canTankShot = true;
         }
     }
 
