@@ -17,19 +17,17 @@ public class App extends PApplet {
     private List<Invader> invaders;
     private List<Barrier> barriers;
     private List<Tank> tanks;
-    private List<TankProjectile> tankprojectiles;
-    private List<InvProjectile> invprojectiles;
+    private List<TankProjectile> tankProjectiles;
+    private List<InvProjectile> invProjectiles;
     private List<Hint> hints;
 
     private Random rand;
-    public int time = 0;
-    public int randomInv = 0;
+    private int time = 0;
 
-//    private boolean isAlive = true;
+    //    private boolean isAlive = true;
     private boolean isDead = false;
     private boolean isNextLevel = false;
     private boolean takeIn = true;
-    private boolean haveInvShot = true;
     private boolean canTankShot = true;
 
 
@@ -39,8 +37,8 @@ public class App extends PApplet {
         invaders = new ArrayList<Invader>();
         barriers = new ArrayList<Barrier>();
         tanks = new ArrayList<Tank>();
-        tankprojectiles = new ArrayList<TankProjectile>();
-        invprojectiles = new ArrayList<InvProjectile>();
+        tankProjectiles = new ArrayList<TankProjectile>();
+        invProjectiles = new ArrayList<InvProjectile>();
         hints = new ArrayList<Hint>();
         rand = new Random();
 
@@ -50,6 +48,8 @@ public class App extends PApplet {
         frameRate(60);
 
         System.out.println("Game is setting up");
+
+        hints.clear();
 
         int inv_x = 180;
         int inv_y = 40;
@@ -146,7 +146,7 @@ public class App extends PApplet {
                 setup();
             }
 
-            haveInvShot = true;
+            boolean haveInvShot = true;
 
             if (invaders.size() == 0) {
                 nextLevel();
@@ -173,10 +173,11 @@ public class App extends PApplet {
             for (Tank tank : tanks) {
                 tank.draw(this);
             }
-            for (TankProjectile ile : tankprojectiles) {
+            for (TankProjectile ile : tankProjectiles) {
                 ile.draw(this);
             }
-            for (InvProjectile ile : invprojectiles) {
+
+            for (InvProjectile ile : invProjectiles) {
                 ile.draw(this);
             }
 
@@ -186,10 +187,10 @@ public class App extends PApplet {
 
             for (Invader inv : invaders) {
                 if (!isInvDisappear) {
-                    for (TankProjectile ile : tankprojectiles) {
+                    for (TankProjectile ile : tankProjectiles) {
                         if (check_collection(ile, inv)) {
                             invaders.remove(inv);
-                            tankprojectiles.remove(ile);
+                            tankProjectiles.remove(ile);
                             isInvDisappear = true;
                             break pointA;
                         }
@@ -203,10 +204,10 @@ public class App extends PApplet {
 
             for (Tank tank : tanks) {
                 if (!isTankDisappear) {
-                    for (InvProjectile ile : invprojectiles) {
+                    for (InvProjectile ile : invProjectiles) {
                         if (check_collection(ile, tank)) {
                             tank.reduceSustain();
-                            invprojectiles.remove(ile);
+                            invProjectiles.remove(ile);
 
                             if (tank.getSustain() == 0) {
                                 gameOver();
@@ -225,10 +226,10 @@ public class App extends PApplet {
 
             for (Barrier bar : barriers) {
                 if (!isBarDisappearByTank) {
-                    for (TankProjectile ile : tankprojectiles) {
+                    for (TankProjectile ile : tankProjectiles) {
                         if (check_collection(ile, bar)) {
                             bar.reduceSustain();
-                            tankprojectiles.remove(ile);
+                            tankProjectiles.remove(ile);
 
                             if (bar.getSustain() == 0) {
                                 barriers.remove(bar);
@@ -247,10 +248,10 @@ public class App extends PApplet {
 
             for (Barrier bar : barriers) {
                 if (!isBarDisappearByInv) {
-                    for (InvProjectile ile : invprojectiles) {
+                    for (InvProjectile ile : invProjectiles) {
                         if (check_collection(ile, bar)) {
                             bar.reduceSustain();
-                            invprojectiles.remove(ile);
+                            invProjectiles.remove(ile);
 
                             if (bar.getSustain() == 0) {
                                 barriers.remove(bar);
@@ -268,8 +269,8 @@ public class App extends PApplet {
             invaders.clear();
             barriers.clear();
             tanks.clear();
-            tankprojectiles.clear();
-            invprojectiles.clear();
+            tankProjectiles.clear();
+            invProjectiles.clear();
             for (Hint hint : hints) {
                 hint.draw(this);
             }
@@ -283,7 +284,7 @@ public class App extends PApplet {
         time += 1;
 
         if (isDead && time == -1) {
-            System.exit(1);
+            System.exit(0);
         }
 
         if (isNextLevel && time == -1) {
@@ -294,30 +295,30 @@ public class App extends PApplet {
 
         if (keyPressed) {
 
-            System.out.println(keyCode);
-            System.out.println(key);
+//            System.out.println(keyCode);
+//            System.out.println(key);
 
 
             if (keyCode == 39) {
-                System.out.println("right");
+//                System.out.println("right");
                 tanks.get(0).rightTick();
             } else if (keyCode == 37) {
-                System.out.println("left");
+//                System.out.println("left");
                 tanks.get(0).leftTick();
             } else if (key == ' ') {
-                System.out.println("shot");
+//                System.out.println("shot");
                 if (canTankShot) {
                     tankShot();
                     canTankShot = false;
                 }
-            } else if (keyCode == 192) {
+            } else if (key == '`') {
                 if (!isDead) {
                     isDead = true;
-                    System.out.println("gameover");
+//                    System.out.println("gameover");
                     gameOver();
                 } else {
                     isDead = false;
-                    System.out.println("gamestart");
+//                    System.out.println("gamestart");
                 }
             } else if (key == 'd') {
                 invaders.clear();
@@ -379,7 +380,7 @@ public class App extends PApplet {
     private void tankShot() {
 
         if (!isDead) {
-            tankprojectiles.add(new TankProjectile(
+            tankProjectiles.add(new TankProjectile(
                     loadImage("projectile.png"),
                     tanks.get(0).getX() + 10, 445, 1, 3
             ));
@@ -387,9 +388,9 @@ public class App extends PApplet {
     }
 
     private void invShot() {
-        randomInv = rand.nextInt(invaders.size());
+        int randomInv = rand.nextInt(invaders.size());
 
-        invprojectiles.add(new InvProjectile(
+        invProjectiles.add(new InvProjectile(
                 loadImage("projectile.png"),
                 invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 1, 3
         ));
