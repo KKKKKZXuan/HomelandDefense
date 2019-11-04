@@ -11,6 +11,7 @@ import invadem.objects.projectiles.InvProjectile;
 import invadem.objects.projectiles.TankProjectile;
 import invadem.objects.tanks.Tank;
 import processing.core.PApplet;
+import processing.core.PFont;
 
 public class App extends PApplet {
 
@@ -23,12 +24,19 @@ public class App extends PApplet {
 
     private Random rand;
     private int time = 0;
+    private int xTrp = 0;
+    private int yTrp = 0;
+    private int level = 0;
+    private int invShotTime = 300;
 
     //    private boolean isAlive = true;
     private boolean isDead = false;
     private boolean isNextLevel = false;
     private boolean takeIn = true;
     private boolean canTankShot = true;
+    private boolean onceInRelease = true;
+    private int score = 0;
+    private int highestScore = 10000;
 
 
     public App() {
@@ -47,18 +55,72 @@ public class App extends PApplet {
     public void setup() {
         frameRate(60);
 
+        PFont myFont = createFont("PressStart2P-Regular.ttf", 10);
+        textFont(myFont);
+
+        level += 1;
+
+        if (invShotTime > 60) {
+            invShotTime = (6 - level) * 60;
+        }
+        else {
+            invShotTime = 60;
+        }
+
+
         System.out.println("Game is setting up");
 
         hints.clear();
 
         int inv_x = 180;
         int inv_y = 40;
-        for (int i = 0; i < 4; i++) {
+
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < 10; j++) {
                 invaders.add(new Invader(
                         loadImage("invader1.png"),
                         loadImage("invader2.png"),
-                        loadImage("empty.png"),
+                        loadImage("invader1_armoured.png"),
+                        loadImage("invader2_armoured.png"),
+                        loadImage("invader1_power.png"),
+                        loadImage("invader2_power.png"),
+                        "armoured",
+                        inv_x, inv_y, 16, 16
+                ));
+                inv_x += 30;
+            }
+            inv_y += 30;
+            inv_x = 180;
+        }
+
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 10; j++) {
+                invaders.add(new Invader(
+                        loadImage("invader1.png"),
+                        loadImage("invader2.png"),
+                        loadImage("invader1_armoured.png"),
+                        loadImage("invader2_armoured.png"),
+                        loadImage("invader1_power.png"),
+                        loadImage("invader2_power.png"),
+                        "power",
+                        inv_x, inv_y, 16, 16
+                ));
+                inv_x += 30;
+            }
+            inv_y += 30;
+            inv_x = 180;
+        }
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 10; j++) {
+                invaders.add(new Invader(
+                        loadImage("invader1.png"),
+                        loadImage("invader2.png"),
+                        loadImage("invader1_armoured.png"),
+                        loadImage("invader2_armoured.png"),
+                        loadImage("invader1_power.png"),
+                        loadImage("invader2_power.png"),
+                        "regular",
                         inv_x, inv_y, 16, 16
                 ));
                 inv_x += 30;
@@ -139,6 +201,16 @@ public class App extends PApplet {
         //Main Game Loop
 
         background(0);
+        xTrp = time % 800 - 150;
+        yTrp = 38;
+
+        fill(255, 255, 255);
+        text("Score: " + Integer.toString(score), 10, 20);
+        text("Highest Score: " + Integer.toString(highestScore), 430, 20);
+        text("Now level: " + Integer.toString(level),xTrp,yTrp);
+
+
+
 
         if (!isDead && !isNextLevel) {
 
@@ -154,9 +226,15 @@ public class App extends PApplet {
 
             for (Invader inv : invaders) {
                 inv.draw(this);
-                if (time % 300 == 0 && time != 0) {
+//                System.out.println(invShotTime);
+                if (time % invShotTime == 0 && time != 0) {
                     if (haveInvShot) {
-                        invShot();
+                        if (inv.type().equals("power")) {
+                            invPowerShot();
+                        }
+                        else {
+                            invShot();
+                        }
                         haveInvShot = false;
                     }
 
@@ -189,7 +267,16 @@ public class App extends PApplet {
                 if (!isInvDisappear) {
                     for (TankProjectile ile : tankProjectiles) {
                         if (check_collection(ile, inv)) {
-                            invaders.remove(inv);
+                            inv.getShot();
+                            if (inv.isDead()) {
+                                invaders.remove(inv);
+                                if (inv.type().equals("regular")) {
+                                    score += 100;
+                                }
+                                else {
+                                    score += 250;
+                                }
+                            }
                             tankProjectiles.remove(ile);
                             isInvDisappear = true;
                             break pointA;
@@ -244,7 +331,7 @@ public class App extends PApplet {
 
             boolean isBarDisappearByInv = false;
 
-            pointC:
+            pointD:
 
             for (Barrier bar : barriers) {
                 if (!isBarDisappearByInv) {
@@ -258,7 +345,7 @@ public class App extends PApplet {
                             }
 
                             isBarDisappearByInv = true;
-                            break pointC;
+                            break pointD;
                         }
                     }
                 }
@@ -283,8 +370,9 @@ public class App extends PApplet {
 
         time += 1;
 
-        if (isDead && time == -1) {
-            System.exit(0);
+        if (isDead) {
+//            System.exit(0);
+            score = 0;
         }
 
         if (isNextLevel && time == -1) {
@@ -294,34 +382,36 @@ public class App extends PApplet {
         }
 
         if (keyPressed) {
-
-//            System.out.println(keyCode);
-//            System.out.println(key);
-
-
             if (keyCode == 39) {
 //                System.out.println("right");
-                tanks.get(0).rightTick();
+                if (tanks.size() > 0) {
+                    tanks.get(0).rightTick();
+                }
             } else if (keyCode == 37) {
 //                System.out.println("left");
-                tanks.get(0).leftTick();
+                if (tanks.size() > 0) {
+                    tanks.get(0).leftTick();
+                }
             } else if (key == ' ') {
 //                System.out.println("shot");
-                if (canTankShot) {
-                    tankShot();
-                    canTankShot = false;
-                }
-            } else if (key == '`') {
-                if (!isDead) {
-                    isDead = true;
-//                    System.out.println("gameover");
-                    gameOver();
-                } else {
-                    isDead = false;
-//                    System.out.println("gamestart");
+                if (tanks.size() > 0) {
+                    if (onceInRelease) {
+                        tankShot();
+                        onceInRelease = false;
+                    }
                 }
             } else if (key == 'd') {
-                invaders.clear();
+                if (onceInRelease) {
+                    invaders.clear();
+                    score += 7000;
+                    onceInRelease = false;
+                }
+            } else if (key == '\n') {
+                if (onceInRelease) {
+                    if (isDead) {
+                        isDead = false;
+                    }
+                }
             }
         }
 
@@ -396,6 +486,15 @@ public class App extends PApplet {
         ));
     }
 
+    private void invPowerShot() {
+        int randomInv = rand.nextInt(invaders.size());
+
+        invProjectiles.add(new InvProjectile(
+                loadImage("projectile_lg.png"),
+                invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 2, 5
+        ));
+    }
+
     private void gameOver() {
 
         isDead = true;
@@ -404,6 +503,12 @@ public class App extends PApplet {
                 loadImage("gameover.png"),
                 269, 240, 112, 16
         ));
+
+        level = 0;
+
+        if (score > highestScore) {
+            highestScore = score;
+        }
 
     }
 
@@ -418,8 +523,8 @@ public class App extends PApplet {
     }
 
     public void keyReleased() {
-        if (!canTankShot) {
-            canTankShot = true;
+        if (!onceInRelease) {
+            onceInRelease = true;
         }
     }
 

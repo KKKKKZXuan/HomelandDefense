@@ -9,24 +9,45 @@ public class Invader {
     private int y;
     private int width;
     private int height;
-    private PImage img1;
-    private PImage img2;
-    private PImage eptImg;
+    private PImage regImg1;
+    private PImage regImg2;
+    private PImage armImg1;
+    private PImage armImg2;
+    private PImage powImg1;
+    private PImage powImg2;
     private PImage now_img;
     private int time = 0;
+    private int life;
+    private String type;
 
-    public boolean touchBottom = false;
+    private boolean touchBottom = false;
 
-    public Invader(PImage img1, PImage img2, PImage eptImg, int x, int y, int width, int height) {
-        this.img1 = img1;
-        this.img2 = img2;
-        this.eptImg = eptImg;
+    public Invader(PImage regImg1, PImage regImg2, PImage armImg1, PImage armImg2, PImage powImg1, PImage powImg2, String type, int x, int y, int width, int height) {
+        this.regImg1 = regImg1;
+        this.regImg2 = regImg2;
+        this.armImg1 = armImg1;
+        this.armImg2 = armImg2;
+        this.powImg1 = powImg1;
+        this.powImg2 = powImg2;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.type = type;
 
-        now_img = img1;
+        if (this.type.equals("regular")) {
+            now_img = regImg1;
+            life = 1;
+        }
+        else if (this.type.equals("armoured")) {
+            now_img = armImg1;
+            life = 3;
+        }
+        else if (this.type.equals("power")) {
+            now_img = powImg1;
+            life = 1;
+        }
+
     }
 
     public int getX() {
@@ -57,8 +78,25 @@ public class Invader {
         this.y += 1;
     }
     
-    public void IsTouchBottom() {
+    private void IsTouchBottom() {
         touchBottom = true;
+    }
+
+    public String type() {
+        return type;
+    }
+
+    public void getShot() {
+        life -= 1;
+    }
+
+    public boolean isDead() {
+        if (life > 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public void draw(PApplet app) {
@@ -68,16 +106,56 @@ public class Invader {
             if (time % 2 == 0) {
                 if (time < 120) {
                     xRightTick();
-                    now_img = img1;
+                    switch (type) {
+                        case "regular":
+                            now_img = regImg1;
+                            break;
+                        case "armoured":
+                            now_img = armImg1;
+                            break;
+                        case "power":
+                            now_img = powImg1;
+                            break;
+                    }
                 } else if (time < 152) {
                     yTick();
-                    now_img = img2;
+                    switch (type) {
+                        case "regular":
+                            now_img = regImg2;
+                            break;
+                        case "armoured":
+                            now_img = armImg2;
+                            break;
+                        case "power":
+                            now_img = powImg2;
+                            break;
+                    }
                 } else if (time < 272) {
                     xLeftTick();
-                    now_img = img1;
+                    switch (type) {
+                        case "regular":
+                            now_img = regImg1;
+                            break;
+                        case "armoured":
+                            now_img = armImg1;
+                            break;
+                        case "power":
+                            now_img = powImg1;
+                            break;
+                    }
                 } else if (time < 304) {
                     yTick();
-                    now_img = img2;
+                    switch (type) {
+                        case "regular":
+                            now_img = regImg2;
+                            break;
+                        case "armoured":
+                            now_img = armImg2;
+                            break;
+                        case "power":
+                            now_img = powImg2;
+                            break;
+                    }
                 } else {
                     time = 0;
                 }
