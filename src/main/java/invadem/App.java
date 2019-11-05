@@ -373,6 +373,7 @@ public class App extends PApplet {
         if (isDead) {
 //            System.exit(0);
             score = 0;
+            text("Press 'ENTER' to restart", 208, 400);
         }
 
         if (isNextLevel && time == -1) {
@@ -411,6 +412,7 @@ public class App extends PApplet {
                     if (isDead) {
                         isDead = false;
                     }
+                    onceInRelease = false;
                 }
             }
         }
