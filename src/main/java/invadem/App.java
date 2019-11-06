@@ -21,6 +21,7 @@ public class App extends PApplet {
     private List<TankProjectile> tankProjectiles;
     private List<InvProjectile> invProjectiles;
     private List<Hint> hints;
+    private List<String> sentence;
 
     private Random rand;
     private int time = 0;
@@ -28,12 +29,11 @@ public class App extends PApplet {
     private int yTrp = 0;
     private int level = 0;
     private int invShotTime = 300;
+    private int numSec = 0;
 
-    //    private boolean isAlive = true;
     private boolean isDead = false;
     private boolean isNextLevel = false;
     private boolean takeIn = true;
-    private boolean canTankShot = true;
     private boolean onceInRelease = true;
     private int score = 0;
     private int highestScore = 10000;
@@ -48,11 +48,15 @@ public class App extends PApplet {
         tankProjectiles = new ArrayList<TankProjectile>();
         invProjectiles = new ArrayList<InvProjectile>();
         hints = new ArrayList<Hint>();
+        sentence = new ArrayList<String>();
         rand = new Random();
 
     }
 
     public void setup() {
+
+        sentence.add("YOU CAN DO IT");
+
         frameRate(60);
 
         PFont myFont = createFont("PressStart2P-Regular.ttf", 10);
@@ -72,7 +76,7 @@ public class App extends PApplet {
 
         hints.clear();
 
-        int inv_x = 180;
+        int inv_x = 150;
         int inv_y = 40;
 
         for (int i = 0; i < 1; i++) {
@@ -90,7 +94,7 @@ public class App extends PApplet {
                 inv_x += 30;
             }
             inv_y += 30;
-            inv_x = 180;
+            inv_x -= 300;
         }
 
         for (int i = 0; i < 1; i++) {
@@ -108,7 +112,7 @@ public class App extends PApplet {
                 inv_x += 30;
             }
             inv_y += 30;
-            inv_x = 180;
+            inv_x -= 300;
         }
 
         for (int i = 0; i < 2; i++) {
@@ -126,7 +130,7 @@ public class App extends PApplet {
                 inv_x += 30;
             }
             inv_y += 30;
-            inv_x = 180;
+            inv_x -= 300;
         }
 
         int bar_x = 180;
@@ -207,12 +211,22 @@ public class App extends PApplet {
         fill(255, 255, 255);
         text("Score: " + Integer.toString(score), 10, 20);
         text("Highest Score: " + Integer.toString(highestScore), 430, 20);
-        text("Now level: " + Integer.toString(level),xTrp,yTrp);
 
 
-
+        System.out.println("is Dead: " + Boolean.toString(isDead));
+        System.out.println("is NextLevel: " + Boolean.toString(isNextLevel));
 
         if (!isDead && !isNextLevel) {
+
+            if (tanks.size() > 0) {
+                text("LIFE " + Integer.toString(tanks.get(0).getSustain()), 330, 20);
+            }
+            if (level > 0) {
+                text("Now level: " + Integer.toString(level),160,20);
+            }
+            if (sentence.size() > 0) {
+                text(sentence.get(numSec),xTrp,yTrp);
+            }
 
             if (tanks.size() == 0) {
                 setup();
@@ -254,7 +268,6 @@ public class App extends PApplet {
             for (TankProjectile ile : tankProjectiles) {
                 ile.draw(this);
             }
-
             for (InvProjectile ile : invProjectiles) {
                 ile.draw(this);
             }
@@ -353,19 +366,26 @@ public class App extends PApplet {
 
         }
         else {
-            invaders.clear();
-            barriers.clear();
-            tanks.clear();
-            tankProjectiles.clear();
-            invProjectiles.clear();
+
             for (Hint hint : hints) {
                 hint.draw(this);
             }
+
+            System.out.println(Boolean.toString(takeIn));
+
             if (takeIn) {
+                System.out.println("Now in cleaning function");
+                invaders.clear();
+                barriers.clear();
+                tanks.clear();
+                tankProjectiles.clear();
+                invProjectiles.clear();
+                sentence.clear();
+
+                System.out.println("Now in the waiting function");
                 time = -50;
                 takeIn = false;
             }
-
         }
 
         time += 1;
@@ -411,6 +431,7 @@ public class App extends PApplet {
                 if (onceInRelease) {
                     if (isDead) {
                         isDead = false;
+                        takeIn = true;
                     }
                     onceInRelease = false;
                 }
