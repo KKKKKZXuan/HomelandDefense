@@ -35,6 +35,7 @@ public class App extends PApplet {
     private boolean isNextLevel = false;
     private boolean takeIn = true;
     private boolean onceInRelease = true;
+    private boolean isWarning = false;
     private int score = 0;
     private int highestScore = 10000;
 
@@ -51,12 +52,15 @@ public class App extends PApplet {
         sentence = new ArrayList<String>();
         rand = new Random();
 
+
+        sentence.add("YOU CAN DO IT!");
+        sentence.add("Never give up!");
+        sentence.add("Try your best!");
+        sentence.add("You are the best one!");
+
     }
 
     public void setup() {
-
-        sentence.add("YOU CAN DO IT");
-
         frameRate(60);
 
         PFont myFont = createFont("PressStart2P-Regular.ttf", 10);
@@ -192,7 +196,7 @@ public class App extends PApplet {
 
         tanks.add(new Tank(
                 loadImage("tank1.png"),
-                300, 450, 22, 16
+                305, 450, 22, 16
         ));
 
     }
@@ -205,18 +209,28 @@ public class App extends PApplet {
         //Main Game Loop
 
         background(0);
-        xTrp = time % 800 - 150;
+        xTrp = time % 900 - 200;
         yTrp = 38;
 
         fill(255, 255, 255);
         text("Score: " + Integer.toString(score), 10, 20);
         text("Highest Score: " + Integer.toString(highestScore), 430, 20);
 
-
-        System.out.println("is Dead: " + Boolean.toString(isDead));
-        System.out.println("is NextLevel: " + Boolean.toString(isNextLevel));
+        if (isWarning) {
+            if (time % 60 <= 30) {
+                fill(255, 0, 0);
+                text("WARNING: INVADERS ARE ARRIVING!", 165, 130);
+            }
+            if (time % 120 > 60) {
+                fill(255, 0, 0);
+                text("Score: " + Integer.toString(score), 10, 20);
+                text("Highest Score: " + Integer.toString(highestScore), 430, 20);
+            }
+        }
 
         if (!isDead && !isNextLevel) {
+
+            fill(255, 255, 255);
 
             if (tanks.size() > 0) {
                 text("LIFE " + Integer.toString(tanks.get(0).getSustain()), 330, 20);
@@ -225,6 +239,11 @@ public class App extends PApplet {
                 text("Now level: " + Integer.toString(level),160,20);
             }
             if (sentence.size() > 0) {
+                if (xTrp == 649 || xTrp == -150) {
+                    numSec = rand.nextInt(sentence.size());
+//                    if ()
+                }
+
                 text(sentence.get(numSec),xTrp,yTrp);
             }
 
@@ -256,6 +275,10 @@ public class App extends PApplet {
 
                 if (inv.getY() > 380) {
                     gameOver();
+                }
+
+                if (inv.getY() > 300) {
+                    isWarning = true;
                 }
 
             }
@@ -371,18 +394,14 @@ public class App extends PApplet {
                 hint.draw(this);
             }
 
-            System.out.println(Boolean.toString(takeIn));
-
             if (takeIn) {
-                System.out.println("Now in cleaning function");
+                isWarning = false;
                 invaders.clear();
                 barriers.clear();
                 tanks.clear();
                 tankProjectiles.clear();
                 invProjectiles.clear();
-                sentence.clear();
 
-                System.out.println("Now in the waiting function");
                 time = -50;
                 takeIn = false;
             }
@@ -393,7 +412,10 @@ public class App extends PApplet {
         if (isDead) {
 //            System.exit(0);
             score = 0;
-            text("Press 'ENTER' to restart", 208, 400);
+            invShotTime = 300;
+            if (time % 60 < 30) {
+                text("Press 'ENTER' to restart", 208, 400);
+            }
         }
 
         if (isNextLevel && time == -1) {
