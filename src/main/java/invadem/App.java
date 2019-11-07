@@ -12,6 +12,7 @@ import invadem.objects.projectiles.TankProjectile;
 import invadem.objects.tanks.Tank;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.event.KeyEvent;
 
 public class App extends PApplet {
 
@@ -423,19 +424,31 @@ public class App extends PApplet {
             takeIn = true;
             setup();
         }
+//
+//        KeyEvent e;
+//        keyPressed(e) {
+//            if (e.getKeyCode() == 32) {
+//
+//            }
+//        }
 
         if (keyPressed) {
+
             if (keyCode == 39) {
 //                System.out.println("right");
                 if (tanks.size() > 0) {
-                    tanks.get(0).rightTick();
+                    if (tanks.get(0).getX() < 580) {
+                        tanks.get(0).rightTick();
+                    }
                 }
             } else if (keyCode == 37) {
 //                System.out.println("left");
                 if (tanks.size() > 0) {
-                    tanks.get(0).leftTick();
+                    if (tanks.get(0).getX() > 60) {
+                        tanks.get(0).leftTick();
+                    }
                 }
-            } else if (key == ' ') {
+            } else if (keyCode == 32 || key == ' ') {
 //                System.out.println("shot");
                 if (tanks.size() > 0) {
                     if (onceInRelease) {
@@ -458,7 +471,12 @@ public class App extends PApplet {
                     onceInRelease = false;
                 }
             }
+//            System.out.println("keyCode in pressed: " + keyCode);
+//            System.out.println("key in pressed \"" + key + "\"");
         }
+
+
+
 
 
     }
@@ -571,6 +589,7 @@ public class App extends PApplet {
         if (!onceInRelease) {
             onceInRelease = true;
         }
+//        System.out.println("keyCode in released: " + keyCode);
     }
 
 
