@@ -1,9 +1,5 @@
 package invadem;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-
 import invadem.objects.barriers.Barrier;
 import invadem.objects.hints.Hint;
 import invadem.objects.invaders.Invader;
@@ -12,7 +8,13 @@ import invadem.objects.projectiles.TankProjectile;
 import invadem.objects.tanks.Tank;
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.event.KeyEvent;
+//import processing.sound.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+
 
 public class App extends PApplet {
 
@@ -25,21 +27,21 @@ public class App extends PApplet {
     private List<String> sentence;
 
     private Random rand;
-    private int time = 0;
-    private int xTrp = 0;
-    private int yTrp = 0;
-    private int level = 0;
-    private int invShotTime = 300;
-    private int numSec = 0;
+    private int time;
+    private int xTrp;
+    private int yTrp;
+    private int level;
+    private int invShotTime;
+    private int numSec;
+    private int status;
+    private int score;
+    private int highestScore;
+    private int playerMode;
 
-    private boolean isDead = false;
-    private boolean isNextLevel = false;
-    private boolean takeIn = true;
-    private boolean onceInRelease = true;
-    private boolean isWarning = false;
-    private int score = 0;
-    private int highestScore = 10000;
-
+    private boolean onceInRelease;
+    private boolean isWarning;
+    private boolean leftChose;
+    private boolean rightChose;
 
     public App() {
         //Set up your objects
@@ -53,6 +55,20 @@ public class App extends PApplet {
         sentence = new ArrayList<String>();
         rand = new Random();
 
+        time = 0;
+        xTrp = 0;
+        yTrp = 0;
+        level = 0;
+        invShotTime = 300;
+        numSec = 0;
+        status = 3;
+        score = 0;
+        highestScore = 10000;
+
+        onceInRelease = true;
+        isWarning = false;
+        leftChose = false;
+        rightChose = false;
 
         sentence.add("YOU CAN DO IT!");
         sentence.add("Never give up!");
@@ -62,11 +78,21 @@ public class App extends PApplet {
     }
 
     public void setup() {
+
+        System.out.println("Game is setting up");
+
         frameRate(60);
 
         PFont myFont = createFont("PressStart2P-Regular.ttf", 10);
         textFont(myFont);
 
+        time = 0;
+        invaders.clear();
+        barriers.clear();
+        tanks.clear();
+        tankProjectiles.clear();
+        invProjectiles.clear();
+        hints.clear();
         level += 1;
 
         if (invShotTime > 60) {
@@ -76,10 +102,11 @@ public class App extends PApplet {
             invShotTime = 60;
         }
 
+//        SoundFile musicfile = new SoundFile(this, "sample.mp3");
+//        musicfile.play();
 
-        System.out.println("Game is setting up");
-
-        hints.clear();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////// Set Invader //////////////////////////////////////////////////////
 
         int inv_x = 150;
         int inv_y = 40;
@@ -138,6 +165,12 @@ public class App extends PApplet {
             inv_x -= 300;
         }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////// Set Barrier //////////////////////////////////////////////////////
+
         int bar_x = 180;
         int bar_y = 400;
         for (int k = 0; k < 3; k++) {
@@ -195,10 +228,30 @@ public class App extends PApplet {
 
         }
 
-        tanks.add(new Tank(
-                loadImage("tank1.png"),
-                305, 450, 22, 16
-        ));
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////// Set Tanks ///////////////////////////////////////////////////////
+
+        if (playerMode == 1) {
+            tanks.add(new Tank(
+                    loadImage("tank1.png"),
+                    305, 450, 22, 16
+            ));
+        }
+        else if (playerMode == 2) {
+            tanks.add(new Tank(
+                    loadImage("tank1.png"),
+                    425, 450, 22, 16
+            ));
+            tanks.add(new Tank(
+                    loadImage("tank1.png"),
+                    185, 450, 22, 16
+            ));
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     }
 
@@ -214,8 +267,11 @@ public class App extends PApplet {
         yTrp = 38;
 
         fill(255, 255, 255);
-        text("Score: " + Integer.toString(score), 10, 20);
-        text("Highest Score: " + Integer.toString(highestScore), 430, 20);
+
+        if (status != 3) {
+            text("Score: " + score, 10, 20);
+            text("Highest Score: " + highestScore, 430, 20);
+        }
 
         if (isWarning) {
             if (time % 60 <= 30) {
@@ -224,38 +280,81 @@ public class App extends PApplet {
             }
             if (time % 120 > 60) {
                 fill(255, 0, 0);
-                text("Score: " + Integer.toString(score), 10, 20);
-                text("Highest Score: " + Integer.toString(highestScore), 430, 20);
+                text("Score: " + score, 10, 20);
+                text("Highest Score: " + highestScore, 430, 20);
             }
         }
 
-        if (!isDead && !isNextLevel) {
+        if (status == 0) {
 
             fill(255, 255, 255);
 
-            if (tanks.size() > 0) {
-                text("LIFE " + Integer.toString(tanks.get(0).getSustain()), 330, 20);
+            if (playerMode == 1) {
+                if (tanks.get(0).getSustain() > 2) {
+                    fill(0, 255, 0);
+                    text("LIFE " + tanks.get(0).getSustain(), 330, 20);
+                }
+                else if (tanks.get(0).getSustain() == 2) {
+                    fill(255, 255, 0);
+                    text("LIFE " + tanks.get(0).getSustain(), 330, 20);
+                }
+                else {
+                    fill(255, 0, 0);
+                    if (time % 30 < 15) {
+                        text("LIFE " + tanks.get(0).getSustain(), 330, 20);
+                    }
+                }
+                fill(255, 255, 255);
+                text("Now level: " + level,160,20);
             }
-            if (level > 0) {
-                text("Now level: " + Integer.toString(level),160,20);
+            else if (playerMode == 2) {
+                if (tanks.get(1).getSustain() > 2) {
+                    fill(0, 255, 0);
+                    text("P1L " + tanks.get(1).getSustain(), 150, 20);
+                }
+                else if (tanks.get(1).getSustain() == 2) {
+                    fill(255, 255, 0);
+                    text("P1L " + tanks.get(1).getSustain(), 150, 20);
+                }
+                else {
+                    fill(255, 0, 0);
+                    if (time % 30 < 15) {
+                        text("P1L " + tanks.get(1).getSustain(), 150, 20);
+                    }
+                }
+
+                if (tanks.get(0).getSustain() > 2) {
+                    fill(0, 255, 0);
+                    text("P2L " + tanks.get(0).getSustain(), 360, 20);
+                }
+                else if (tanks.get(0).getSustain() == 2) {
+                    fill(255, 255, 0);
+                    text("P1L " + tanks.get(0).getSustain(), 360, 20);
+                }
+                else {
+                    fill(255, 0, 0);
+                    if (time % 30 < 15) {
+                        text("P2L " + tanks.get(0).getSustain(), 360, 20);
+                    }
+                }
+
+                fill(255, 255, 255);
+                text("Now level: " + level,220,20);
             }
+
+
             if (sentence.size() > 0) {
                 if (xTrp == 649 || xTrp == -150) {
                     numSec = rand.nextInt(sentence.size());
 //                    if ()
                 }
-
                 text(sentence.get(numSec),xTrp,yTrp);
-            }
-
-            if (tanks.size() == 0) {
-                setup();
             }
 
             boolean haveInvShot = true;
 
             if (invaders.size() == 0) {
-                nextLevel();
+                status = 2;
             }
 
             for (Invader inv : invaders) {
@@ -275,7 +374,7 @@ public class App extends PApplet {
                 }
 
                 if (inv.getY() > 380) {
-                    gameOver();
+                    status = 1;
                 }
 
                 if (inv.getY() > 300) {
@@ -295,6 +394,8 @@ public class App extends PApplet {
             for (InvProjectile ile : invProjectiles) {
                 ile.draw(this);
             }
+
+
 
             boolean isInvDisappear = false;
 
@@ -334,7 +435,7 @@ public class App extends PApplet {
                             invProjectiles.remove(ile);
 
                             if (tank.getSustain() == 0) {
-                                gameOver();
+                                status = 1;
                             }
 
                             isTankDisappear = true;
@@ -387,86 +488,178 @@ public class App extends PApplet {
                     }
                 }
             }
-
         }
-        else {
 
+        else if (status == 1) {
+//            System.exit(0);
+            isWarning = false;
+            gameOver();
             for (Hint hint : hints) {
                 hint.draw(this);
             }
-
-            if (takeIn) {
-                isWarning = false;
-                invaders.clear();
-                barriers.clear();
-                tanks.clear();
-                tankProjectiles.clear();
-                invProjectiles.clear();
-
-                time = -50;
-                takeIn = false;
-            }
-        }
-
-        time += 1;
-
-        if (isDead) {
-//            System.exit(0);
             score = 0;
             invShotTime = 300;
             if (time % 60 < 30) {
                 text("Press 'ENTER' to restart", 208, 400);
             }
         }
+        else if (status == 2) {
+            isWarning = false;
+            nextLevel();
+            for (Hint hint : hints) {
+                hint.draw(this);
+            }
+            if (time > 0) {
+                time = -120;
+            }
+            if (time == -1) {
+                setup();
+                status = 0;
+            }
 
-        if (isNextLevel && time == -1) {
-            isNextLevel = false;
-            takeIn = true;
-            setup();
         }
-//
-//        KeyEvent e;
-//        keyPressed(e) {
-//            if (e.getKeyCode() == 32) {
-//
-//            }
-//        }
+        else if (status == 3) {
+
+            fill(255, 0, 0);
+            textSize(25);
+            text("Invadem", 225, 150);
+
+            fill(255, 255, 255);
+            textSize(10);
+            if (time % 120 < 60) {
+                text("Have a choose", 250, 260);
+            }
+
+            if ((mouseX > 140 && mouseX < 260 && mouseY > 320 && mouseY < 350 )|| keyCode == 37) {
+                fill(0, 255, 0);
+                leftChose = true;
+                rightChose = false;
+                if (mousePressed) {
+                    playerMode = 1;
+                    level = 0;
+                    leftChose = false;
+                    setup();
+                    status = 0;
+                }
+            }
+            else {
+                fill(255, 255, 255);
+            }
+
+            if (leftChose &&( key == '\n')) {
+                playerMode = 1;
+                level = 0;
+                leftChose = false;
+                setup();
+                status = 0;
+            }
+
+            text("One Player", 150, 330);
+            fill(255, 255, 255);
+
+
+
+            if ((mouseX > 360 && mouseX < 480 && mouseY > 320 && mouseY < 350 )|| keyCode == 39) {
+                fill(0, 255, 0);
+                rightChose = true;
+                leftChose = false;
+                if (mousePressed) {
+                    playerMode = 2;
+                    level = 0;
+                    rightChose = false;
+                    setup();
+                    status = 0;
+                }
+            }
+            else {
+                fill(255, 255, 255);
+            }
+
+            if (rightChose &&( key == '\n')) {
+
+                playerMode = 2;
+                level = 0;
+                rightChose = false;
+                setup();
+                status = 0;
+            }
+
+            text("Two Players", 380, 330);
+            fill(255, 255, 255);
+
+        }
+
+        time += 1;
+
+
 
         if (keyPressed) {
 
             if (keyCode == 39) {
 //                System.out.println("right");
-                if (tanks.size() > 0) {
+                if (status == 0) {
                     if (tanks.get(0).getX() < 580) {
                         tanks.get(0).rightTick();
                     }
                 }
             } else if (keyCode == 37) {
 //                System.out.println("left");
-                if (tanks.size() > 0) {
+                if (status == 0) {
                     if (tanks.get(0).getX() > 60) {
                         tanks.get(0).leftTick();
                     }
                 }
-            } else if (keyCode == 32 || key == ' ') {
+            } else if (keyCode == 40) {
 //                System.out.println("shot");
-                if (tanks.size() > 0) {
+                if (status == 0) {
                     if (onceInRelease) {
-                        tankShot();
+                        tankShot(0);
                         onceInRelease = false;
                     }
                 }
-            } else if (key == 'd') {
+            }else if (key == 'd') {
+//                System.out.println("right");
+                if (tanks.size() > 1) {
+                    if (status == 0) {
+                        if (tanks.get(1).getX() < 580) {
+                            tanks.get(1).rightTick();
+                        }
+                    }
+                }
+            } else if (key == 'a') {
+//                System.out.println("left");
+                if (tanks.size() > 1) {
+                    if (status == 0) {
+                        if (tanks.get(1).getX() > 60) {
+                            tanks.get(1).leftTick();
+                        }
+                    }
+                }
+            } else if (key == 's') {
+//                System.out.println("shot");
+                if (tanks.size() > 1) {
+                    if (status == 0) {
+                        if (onceInRelease) {
+                            tankShot(1);
+                            onceInRelease = false;
+                        }
+                    }
+                }
+            } else if (key == 'f') {
                 if (onceInRelease) {
                     invaders.clear();
-                    score += 7000;
+                    onceInRelease = false;
+                }
+            } else if (key == 'o') {
+                if (onceInRelease) {
+                    status = 1;
                     onceInRelease = false;
                 }
             } else if (key == '\n') {
                 if (onceInRelease) {
-                    if (isDead) {
-                        isDead = false;
-                        takeIn = true;
+                    if (status != 0) {
+                        setup();
+                        status = 0;
                     }
                     onceInRelease = false;
                 }
@@ -474,10 +667,6 @@ public class App extends PApplet {
 //            System.out.println("keyCode in pressed: " + keyCode);
 //            System.out.println("key in pressed \"" + key + "\"");
         }
-
-
-
-
 
     }
 
@@ -530,37 +719,41 @@ public class App extends PApplet {
     }
 
 
-    private void tankShot() {
+    private void tankShot(int numTank) {
 
-        if (!isDead) {
+        if (status == 0) {
             tankProjectiles.add(new TankProjectile(
                     loadImage("projectile.png"),
-                    tanks.get(0).getX() + 10, 445, 1, 3
+                    tanks.get(numTank).getX() + 10, 445, 1, 3
             ));
         }
     }
 
     private void invShot() {
-        int randomInv = rand.nextInt(invaders.size());
 
-        invProjectiles.add(new InvProjectile(
-                loadImage("projectile.png"),
-                invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 1, 3
-        ));
+        if (status == 0) {
+            int randomInv = rand.nextInt(invaders.size());
+
+            invProjectiles.add(new InvProjectile(
+                    loadImage("projectile.png"),
+                    invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 1, 3
+            ));
+        }
     }
 
     private void invPowerShot() {
-        int randomInv = rand.nextInt(invaders.size());
 
-        invProjectiles.add(new InvProjectile(
-                loadImage("projectile_lg.png"),
-                invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 2, 5
-        ));
+        if (status == 0) {
+            int randomInv = rand.nextInt(invaders.size());
+
+            invProjectiles.add(new InvProjectile(
+                    loadImage("projectile_lg.png"),
+                    invaders.get(randomInv).getX() + 7, invaders.get(randomInv).getY() + 7, 2, 5
+            ));
+        }
     }
 
     private void gameOver() {
-
-        isDead = true;
 
         hints.add(new Hint(
                 loadImage("gameover.png"),
@@ -572,12 +765,9 @@ public class App extends PApplet {
         if (score > highestScore) {
             highestScore = score;
         }
-
     }
 
     private void nextLevel() {
-
-        isNextLevel = true;
 
         hints.add(new Hint(
                 loadImage("nextlevel.png"),
@@ -589,7 +779,6 @@ public class App extends PApplet {
         if (!onceInRelease) {
             onceInRelease = true;
         }
-//        System.out.println("keyCode in released: " + keyCode);
     }
 
 
