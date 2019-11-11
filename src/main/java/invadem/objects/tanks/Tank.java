@@ -51,10 +51,11 @@ public class Tank {
     }
 
     public int getSustain() {
-        if (sustain < 0) {
-            return 0;
-        }
-        return sustain;
+        return Math.max(sustain, 0);
+    }
+
+    public boolean isDead() {
+        return getSustain() <= 0;
     }
 
     public void draw(PApplet app) {

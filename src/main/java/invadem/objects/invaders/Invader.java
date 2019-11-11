@@ -35,17 +35,19 @@ public class Invader {
         this.height = height;
         this.type = type;
 
-        if (this.type.equals("regular")) {
-            now_img = regImg1;
-            life = 1;
-        }
-        else if (this.type.equals("armoured")) {
-            now_img = armImg1;
-            life = 3;
-        }
-        else if (this.type.equals("power")) {
-            now_img = powImg1;
-            life = 1;
+        switch (this.type) {
+            case "regular":
+                now_img = regImg1;
+                life = 1;
+                break;
+            case "armoured":
+                now_img = armImg1;
+                life = 3;
+                break;
+            case "power":
+                now_img = powImg1;
+                life = 1;
+                break;
         }
 
     }
@@ -91,12 +93,7 @@ public class Invader {
     }
 
     public boolean isDead() {
-        if (life > 0) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return life <= 0;
     }
 
     public void draw(PApplet app) {

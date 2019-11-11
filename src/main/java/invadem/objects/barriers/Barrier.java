@@ -60,6 +60,15 @@ public class Barrier {
         return sustain;
     }
 
+    public boolean isDestroyed() {
+        if (this.getSustain() > 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     public void draw(PApplet app) {
 
         if (getSustain() == 3){

@@ -46,13 +46,13 @@ public class App extends PApplet {
     public App() {
         //Set up your objects
 
-        invaders = new ArrayList<Invader>();
-        barriers = new ArrayList<Barrier>();
-        tanks = new ArrayList<Tank>();
-        tankProjectiles = new ArrayList<TankProjectile>();
-        invProjectiles = new ArrayList<InvProjectile>();
-        hints = new ArrayList<Hint>();
-        sentence = new ArrayList<String>();
+        invaders = new ArrayList<>();
+        barriers = new ArrayList<>();
+        tanks = new ArrayList<>();
+        tankProjectiles = new ArrayList<>();
+        invProjectiles = new ArrayList<>();
+        hints = new ArrayList<>();
+        sentence = new ArrayList<>();
         rand = new Random();
 
         time = 0;
@@ -664,62 +664,59 @@ public class App extends PApplet {
                     onceInRelease = false;
                 }
             }
-//            System.out.println("keyCode in pressed: " + keyCode);
+            System.out.println("keyCode in pressed: " + keyCode);
 //            System.out.println("key in pressed \"" + key + "\"");
         }
 
     }
 
-    private boolean check_collection(TankProjectile a, Invader b) {
-        if ((a.getX() < (b.getX() + b.getWidth())) &&
+    protected boolean check_collection(TankProjectile a, Invader b) {
+        return (a.getX() < (b.getX() + b.getWidth())) &&
                 ((a.getX() + a.getWidth()) > b.getX()) &&
                 (a.getY() < (b.getY() + b.getHeight())) &&
-                ((a.getHeight() + a.getY()) > b.getY())) {
-            return true;
-        }
-        else {
-            return false;
-        }
+                ((a.getHeight() + a.getY()) > b.getY());
     }
 
-    private boolean check_collection(InvProjectile a, Tank b) {
-        if ((a.getX() < (b.getX() + b.getWidth())) &&
+    protected boolean check_collection(InvProjectile a, Tank b) {
+        return (a.getX() < (b.getX() + b.getWidth())) &&
                 ((a.getX() + a.getWidth()) > b.getX()) &&
                 (a.getY() < (b.getY() + b.getHeight())) &&
-                ((a.getHeight() + a.getY()) > b.getY())) {
-            return true;
-        }
-        else {
-            return false;
-        }
+                ((a.getHeight() + a.getY()) > b.getY());
     }
 
-    private boolean check_collection(TankProjectile a, Barrier b) {
-        if ((a.getX() < (b.getX() + b.getWidth())) &&
+    protected boolean check_collection(InvProjectile a, Invader b) {
+
+        return false;
+
+    }
+
+    protected boolean check_collection(TankProjectile a, Barrier b) {
+        return (a.getX() < (b.getX() + b.getWidth())) &&
                 ((a.getX() + a.getWidth()) > b.getX()) &&
                 (a.getY() < (b.getY() + b.getHeight())) &&
-                ((a.getHeight() + a.getY()) > b.getY())) {
-            return true;
-        }
-        else {
-            return false;
-        }
+                ((a.getHeight() + a.getY()) > b.getY());
     }
 
-    private boolean check_collection(InvProjectile a, Barrier b) {
-        if ((a.getX() < (b.getX() + b.getWidth())) &&
+    protected boolean check_collection(InvProjectile a, Barrier b) {
+        return (a.getX() < (b.getX() + b.getWidth())) &&
                 ((a.getX() + a.getWidth()) > b.getX()) &&
                 (a.getY() < (b.getY() + b.getHeight())) &&
-                ((a.getHeight() + a.getY()) > b.getY())) {
-            return true;
-        }
-        else {
-            return false;
-        }
+                ((a.getHeight() + a.getY()) > b.getY());
     }
 
+    protected void setStatus(int i) {
+        status = i;
+    }
 
-    private void tankShot(int numTank) {
+    protected int getStatus() {
+        return status;
+    }
+
+    protected List<TankProjectile> getTankProjectiles() {
+        return tankProjectiles;
+    }
+
+    protected void tankShot(int numTank) {
 
         if (status == 0) {
             tankProjectiles.add(new TankProjectile(

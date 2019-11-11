@@ -12,7 +12,7 @@ public class TankProjectile extends Projectile{
         this.img = img;
     }
 
-    private void yTick() {
+    public void yTick() {
         this.y -= 1;
     }
 
