@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="invadem.TankTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-11-11T09:22:37" hostname="KZX-Razer" time="0.0">
+  <properties/>
+  <testcase name="testTankIsDead" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankProjectile" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankCrate" classname="invadem.TankTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

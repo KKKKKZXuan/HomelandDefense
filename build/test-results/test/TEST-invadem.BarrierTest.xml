@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="invadem.BarrierTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2019-11-11T09:22:37" hostname="KZX-Razer" time="0.081">
+  <properties/>
+  <testcase name="testInvaderIntersectWithInvaderProjectile" classname="invadem.BarrierTest" time="0.074"/>
+  <testcase name="testBarrierHitPointsMax1" classname="invadem.BarrierTest" time="0.003"/>
+  <testcase name="testBarrierHitPointsMax2" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierNotDestroyed" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierIntersectWithPlayerProjectile" classname="invadem.BarrierTest" time="0.002"/>
+  <testcase name="testBarrierHitPointsMax" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierIsDestroyed" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="barrierConstruction" classname="invadem.BarrierTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
